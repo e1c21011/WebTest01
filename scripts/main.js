@@ -1,4 +1,4 @@
-import * as THREE from 'https://cdn.skypack.dev/three@0.167.0';
+import * as THREE from 'https://unpkg.com/three@0.168.0/build/three.module.js';
 import * as GaussianSplats3D from 'https://cdn.skypack.dev/@mkkellogg/gaussian-splats-3d';
 
 // シーンのセットアップ
