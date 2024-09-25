@@ -1,37 +1,37 @@
-import * as THREE from 'https://unpkg.com/three@0.168.0/build/three.module.js';
-import * as GaussianSplats3D from 'https://cdn.skypack.dev/@mkkellogg/gaussian-splats-3d';
+import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.168.0/build/three.module.js';
+// Gaussian Splattingのモジュールをインポート
+import { GaussianSplat } from 'https://cdn.jsdelivr.net/npm/@mkkellogg/gaussian-splats-3d/dist/gaussian-splats-3d.module.js';
 
-// シーンのセットアップ
+// シーンの初期化
 const scene = new THREE.Scene();
-const viewer = new GaussianSplats3D.Viewer({
-    threeScene: scene,
-});
-
-// Splatシーンの追加
-viewer.addSplatScene('models/model.splat', {
-    splatAlphaRemovalThreshold: 5,
-    showLoadingUI: true,
-    position: [0, 0, 0],
-}).then(() => {
-    viewer.start();
-});
-
-// Three.jsのレンダラーを追加
-const renderer = new THREE.WebGLRenderer({ antialias: true });
+const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+const renderer = new THREE.WebGLRenderer({ alpha: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
-document.getElementById('viewer').appendChild(renderer.domElement);
+document.getElementById('container').appendChild(renderer.domElement);
 
-// ウィンドウサイズの変更に対応
-window.addEventListener('resize', () => {
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    viewer.camera.aspect = window.innerWidth / window.innerHeight;
-    viewer.camera.updateProjectionMatrix();
-});
+// Gaussian Splattingのためのデータを準備
+const splatData = []; // スプラットデータをここに配置
+
+// スプラットを作成し、シーンに追加
+const gaussianSplat = new GaussianSplat(splatData);
+scene.add(gaussianSplat);
+
+// カメラの位置を設定
+camera.position.z = 5;
 
 // アニメーションループ
-function animate() {
+const animate = function () {
     requestAnimationFrame(animate);
-    viewer.update();
-    viewer.render();
-}
+    gaussianSplat.update(); // スプラットの更新
+    renderer.render(scene, camera);
+};
+
+// ウィンドウサイズ変更時の処理
+window.addEventListener('resize', () => {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+});
+
+// アニメーション開始
 animate();
